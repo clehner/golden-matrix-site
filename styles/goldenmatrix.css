@@ -1,0 +1,132 @@
+body {
+	margin: 0;
+}
+
+#container {
+	width: 800px;
+	margin: 8px auto 0;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+#timeline {
+	height: 40px;
+	border: 1px solid #BC987E;
+	position: relative;
+}
+#timeline-track {
+	position: absolute;
+	height: 0;
+	border-top: 1px solid #483C32;
+	bottom: .5em;
+	left: .5em;
+	right: .5em;
+	        user-select: none;
+	     -o-user-select: none;
+	   -moz-user-select: none;
+	 -khtml-user-select: none;
+	-webkit-user-select: none;
+}
+#timeline .date {
+	width: 5px;
+	height: 5px;
+	display: block;
+	position: absolute;
+	bottom: -2px;
+	margin: 0 -3px 0 -2px;
+	border-radius: 5px;
+	background-color: #967117;
+}
+#timeline .date-label {
+	padding: 0 .5em;
+	color: #8B8589;
+	position: absolute;
+	white-space: nowrap;
+	bottom: .25em;
+}
+#current-date .date-label {
+	text-align: center;
+	color: #000;
+	border: 1px solid #905D5D;
+	background-color: #ddc1a8;
+	line-height: 1em;
+	padding: .2em .4em;
+	border-radius: .4em;
+	bottom: .4em;
+	cursor: move;
+}
+#current-date .date-label:hover {
+	background-color: #e6cca8;
+}
+#current-date .date-label:active {
+	background-color: #f3dcb5;
+}
+
+#timeline .date.left, #timeline .date.left .date-label {
+	left: 0;
+	text-align: left;
+}
+#timeline .date.right, #timeline .date.right .date-label {
+	right: 0;
+	text-align: right;
+}
+#current-date .date-label {
+	text-align: center;
+	left: -1.75em;
+}
+
+#map {
+	height: 400px;
+	background-color: #BC987E;
+	position: relative;
+}
+
+#map .node {
+	position: absolute;
+	display: block;
+	font-size: 0;
+	width: 1em;
+	height: 1em;
+	margin: -.5em;	
+	background-color: #674C47;
+	        border-radius: 1em;
+	     -o-border-radius: 1em;
+	   -moz-border-radius: 1em;
+	 -khtml-border-radius: 1em;
+	-webkit-border-radius: 1em;
+}
+
+#map .node:hover {
+	background-color: #967117;
+}
+
+#info {
+	height: 160px;
+	border: 1px solid #8B8589;
+}
+
+#node-headings-outer, #node-thread-content-outer {
+	height: 100%;
+	overflow: auto;
+}
+#node-headings-outer {
+	float: left;
+	border-right: 1px solid #999;
+}
+#node-headings {
+	margin: 0 1em;
+	min-width: 6em;
+}
+#node-thread-content {
+	margin: 1em;
+	line-height: 1.6em;
+}
+.node-thread {
+}
+
+#node-headings h3 {
+	font-size: 1em;
+	color: #905D5D;
+}
+#node-headings h3 a {
+	color: inherit;
+}

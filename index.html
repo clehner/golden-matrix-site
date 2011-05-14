@@ -5,7 +5,6 @@
 <title>Golden Matrix</title>
 <link rel="stylesheet" type="text/css" href="styles/goldenmatrix.css">
 <script src="scripts/util.js" type="text/javascript"></script>
-<script src="scripts/transitions.js" type="text/javascript"></script>
 </head>
 <body>
 <div id="container">
@@ -17,12 +16,16 @@
 			<div class="date right">
 				<span class="date-label">1453 CE</span>
 			</div>
-			<div class="date" id="current-date">
-				<span class="date-label">&nbsp;</span>
+			<div id="timeline-track-inner">
+				<div class="date" id="current-date">&nbsp;</div>
 			</div>
 		</div>
 	</div>
-	<div id="map"></div>
+	<div id="map-container">
+		<div id="map">
+			<img id="map-img" src="images/map.png">
+		</div>
+	</div>
 	<div id="info">
 		<div id="node-headings-outer">
 			<div id="node-headings"></div>

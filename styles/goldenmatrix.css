@@ -10,54 +10,53 @@ body {
 
 #timeline {
 	height: 40px;
-	border: 1px solid #BC987E;
+	/*border: 1px solid #BC987E;*/
 	position: relative;
 }
 #timeline-track {
 	position: absolute;
-	height: 0;
-	border-top: 1px solid #483C32;
-	bottom: .5em;
+	/*border: 1px solid #483C32;*/
+	background-color: #edc;
+	top: 50%;
 	left: .5em;
 	right: .5em;
+	margin-top: -.4em;
 	        user-select: none;
 	     -o-user-select: none;
 	   -moz-user-select: none;
 	 -khtml-user-select: none;
 	-webkit-user-select: none;
+	     border-radius: .4em;
+	-moz-border-radius: .4em;
+}
+#timeline-track-inner {
+	margin-right: 4em;
+	cursor: move;
 }
 #timeline .date {
-	width: 5px;
-	height: 5px;
-	display: block;
-	position: absolute;
-	bottom: -2px;
-	margin: 0 -3px 0 -2px;
-	border-radius: 5px;
-	background-color: #967117;
-}
-#timeline .date-label {
 	padding: 0 .5em;
-	color: #8B8589;
+	/*color: #8B8589;*/
+	color: #876;
 	position: absolute;
 	white-space: nowrap;
-	bottom: .25em;
+	cursor: move;
 }
-#current-date .date-label {
+#timeline #current-date {
+	position: relative;
+	display: inline;
 	text-align: center;
 	color: #000;
 	border: 1px solid #905D5D;
-	background-color: #ddc1a8;
+	background-color: #ddc1a8; /*ddc1a8,ccac93,BC987E*/
 	line-height: 1em;
 	padding: .2em .4em;
-	border-radius: .4em;
-	bottom: .4em;
-	cursor: move;
+	     border-radius: .5em;
+	-moz-border-radius: .5em;
 }
-#current-date .date-label:hover {
+#current-date:hover {
 	background-color: #e6cca8;
 }
-#current-date .date-label:active {
+#current-date:active {
 	background-color: #f3dcb5;
 }
 
@@ -74,10 +73,19 @@ body {
 	left: -1.75em;
 }
 
-#map {
+#map-container {
 	height: 400px;
 	background-color: #BC987E;
+	text-align: center;
+}
+
+#map {
 	position: relative;
+	display: inline-block;
+}
+
+#map-img {
+	height: 100%;
 }
 
 #map .node {
@@ -101,7 +109,7 @@ body {
 
 #info {
 	height: 160px;
-	border: 1px solid #8B8589;
+	/*border: 1px solid #8B8589;*/
 }
 
 #node-headings-outer, #node-thread-content-outer {
@@ -123,6 +131,10 @@ body {
 .node-thread {
 }
 
+#node-headings h2 {
+	font-size: 1em;
+	color: #544;
+}
 #node-headings h3 {
 	font-size: 1em;
 	color: #905D5D;

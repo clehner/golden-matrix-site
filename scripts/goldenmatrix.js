@@ -40,14 +40,20 @@ function GMNode(doc) {
 	this.element.href = "#{year}," + this.id;
 	
 	var s = this.element.style;
-	s.left = doc.x * 100 + "%";
-	s.top = doc.y * 100 + "%";
+	var pos = doc.position || 0;
+	s.left = pos[0] * 100 + "%";
+	s.top = pos[1] * 100 + "%";
 	
 	// headings for the threads. located in the sidebar.
 	this.headingsElement = document.createElement("div");
 	this.headingsByThreadId = {};
+	
+	var h2 = document.createElement("h2");
+	h2.appendChild(document.createTextNode(this.name));
+	this.headingsElement.appendChild(h2);
 }
 GMNode.prototype = {
+	baseSize: 3, // *10 radius
 	setThread: function (thread) {
 		var id = thread.id;
 		var oldThread = this.threadsById[id];
@@ -86,6 +92,9 @@ GMNode.prototype = {
 		var size = prevSize + ease((year - prevYear) / yearRange) * sizeRange;
 		return size;
 	},
+	areaToRadius: function (area) {
+		return Math.sqrt(area) * this.baseSize + "px"
+	},
 	animateSizeToYear: function (year) {
 		if (this.currentYear == year) return;
 		this.currentYear = year;
@@ -98,7 +107,7 @@ GMNode.prototype = {
 			style.display = "";
 		}
 		this.currentSize = size;
-		style.fontSize = size + "px";
+		style.fontSize = this.areaToRadius(size);
 	}
 }
 
@@ -137,7 +146,7 @@ function buildNodes(rows) {
 }
 
 var dateEl = $("current-date");
-var dateTextEl = getElementByClassName(dateEl, "date-label").firstChild;
+var dateTextEl = dateEl.firstChild;
 
 var startYear = -1300;
 var endYear = 1453;
@@ -160,17 +169,15 @@ var slider = new Slider({
 		var era = year < 0 ? "BC" : "CE";
 		dateTextEl.nodeValue = Math.abs(year) + " " + era;
 		updateNodeSizesWithYear(year);
-		//updateHashSoon();
+		updateHashSoon();
 	}
 });
+
 function gotoYear(year) {
 	slider.set((year - startYear) / yearRange);
 }
 
 var headingsElement = $("node-headings");
-function gotoNode(node) {
-}
-
 var contentElement = $("node-thread-content");
 function gotoNodeThread(node, thread) {
 	if (currentNodeThread != thread) {
@@ -238,3 +245,8 @@ function rewriteHref(e) {
 window.addEventListener("click", rewriteHref, false);
 window.addEventListener("focus", rewriteHref, false);
 window.addEventListener("mouseover", rewriteHref, false);
+
+// prevent dragging map image
+$("map-img").addEventListener("mousedown", function (e) {
+	e.preventDefault();
+}, false);

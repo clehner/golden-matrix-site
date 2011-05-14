@@ -60,6 +60,13 @@ function Slider(opt) {
 	var pos;
 	
 	sliderEl.addEventListener("mousedown", mousedown, false);
+
+	// allow clicking in the track to jump
+	trackEl.addEventListener("mousedown", trackMousedown, false);
+	function trackMousedown(e) {
+		sliderEl.style.left = e.layerX - sliderEl.offsetWidth / 2 + "px";
+		mousedown(e);
+	}
 	
 	var dragging = false;
 	var startX;
@@ -69,6 +76,9 @@ function Slider(opt) {
 		window.addEventListener("mousemove", drag, false);
 		window.addEventListener("mouseup", mouseup, false);
 		startX = sliderEl.offsetLeft - e.pageX;
+		// prevent accidental text selection while dragging slider
+		e.preventDefault();
+		e.stopPropagation();
 	}
 	function mouseup(e) {
 		dragging = false;

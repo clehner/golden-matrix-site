@@ -93,13 +93,14 @@ GMNode.prototype = {
 		return size;
 	},
 	areaToRadius: function (area) {
-		return Math.sqrt(area) * this.baseSize + "px"
+		return Math.sqrt(area) * this.baseSize
+			* nodeContainer.offsetWidth / 400 + "px";
 	},
-	animateSizeToYear: function (year) {
-		if (this.currentYear == year) return;
+	animateSizeToYear: function (year, force) {
+		if (this.currentYear == year && !force) return;
 		this.currentYear = year;
 		var size = this.getSizeAtYear(year).toFixed(0)
-		if (this.currentSize == size) return;
+		if (this.currentSize == size && !force) return;
 		var style = this.element.style;
 		if (size == 0) {
 			style.display = "none";
@@ -250,3 +251,19 @@ window.addEventListener("mouseover", rewriteHref, false);
 $("map-img").addEventListener("mousedown", function (e) {
 	e.preventDefault();
 }, false);
+
+var mapContainer = $("map-container");
+window.addEventListener("resize", onResize, false);
+function hideMap() {
+	nodeContainer.style.display = "none";
+}
+function showMap() {
+	nodeContainer.style.display = "inline-block";
+	visibleNodes.forEach(function (node) {
+		node.animateSizeToYear(currentYear, true);
+	});
+}
+function onResize(e) {
+	hideMap();
+	setTimeout(showMap, 0);
+}

@@ -73,8 +73,8 @@ function Slider(opt) {
 	function mousedown(e) {
 		if (dragging) return;
 		dragging = true;
-		window.addEventListener("mousemove", drag, false);
-		window.addEventListener("mouseup", mouseup, false);
+		document.addEventListener("mousemove", drag, false);
+		document.addEventListener("mouseup", mouseup, false);
 		startX = sliderEl.offsetLeft - e.pageX;
 		// prevent accidental text selection while dragging slider
 		e.preventDefault();
@@ -82,8 +82,8 @@ function Slider(opt) {
 	}
 	function mouseup(e) {
 		dragging = false;
-		window.removeEventListener("mousemove", drag, false);
-		window.removeEventListener("mouseup", mouseup, false);
+		document.removeEventListener("mousemove", drag, false);
+		document.removeEventListener("mouseup", mouseup, false);
 	}
 	
 	function drag(e) {

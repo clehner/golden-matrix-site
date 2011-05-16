@@ -1,11 +1,16 @@
-body {
+html, body {
 	margin: 0;
+	padding: 0;
+	height: 100%;
+	font-family: Arial, Helvetica, sans-serif;
 }
 
 #container {
-	width: 800px;
-	margin: 8px auto 0;
-	font-family: Arial, Helvetica, sans-serif;
+	position: absolute;
+	top: 40px;
+	bottom: 0;
+	left: 0;
+	width: 100%;
 }
 
 #timeline {
@@ -30,7 +35,7 @@ body {
 	-moz-border-radius: .4em;
 }
 #timeline-track-inner {
-	margin-right: 4em;
+	margin-right: 4.8em; /* slider width */
 	cursor: move;
 }
 #timeline .date {
@@ -60,21 +65,17 @@ body {
 	background-color: #f3dcb5;
 }
 
-#timeline .date.left, #timeline .date.left .date-label {
+#timeline .date.left {
 	left: 0;
 	text-align: left;
 }
-#timeline .date.right, #timeline .date.right .date-label {
+#timeline .date.right {
 	right: 0;
 	text-align: right;
 }
-#current-date .date-label {
-	text-align: center;
-	left: -1.75em;
-}
 
 #map-container {
-	height: 400px;
+	height: 60%;
 	background-color: #BC987E;
 	text-align: center;
 }
@@ -86,6 +87,7 @@ body {
 
 #map-img {
 	height: 100%;
+	display: block;
 }
 
 #map .node {
@@ -102,13 +104,15 @@ body {
 	 -khtml-border-radius: 1em;
 	-webkit-border-radius: 1em;
 }
-
 #map .node:hover {
 	background-color: #967117;
 }
+#map .node:active {
+	background-color: #C25D1E;
+}
 
 #info {
-	height: 160px;
+	height: 40%;
 	/*border: 1px solid #8B8589;*/
 }
 

@@ -1,0 +1,9 @@
+#nodes li:not(:hover) a {
+	display: none;
+}
+
+#nodes textarea {
+	display: block;
+	width: 30em;
+	height: 6em;
+}

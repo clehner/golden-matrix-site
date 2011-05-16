@@ -75,6 +75,7 @@ function Slider(opt) {
 		dragging = true;
 		document.addEventListener("mousemove", drag, false);
 		document.addEventListener("mouseup", mouseup, false);
+		document.addEventListener("contextmenu", mouseup, false);
 		startX = sliderEl.offsetLeft - e.pageX;
 		// prevent accidental text selection while dragging slider
 		e.preventDefault();

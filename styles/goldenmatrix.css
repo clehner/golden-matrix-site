@@ -78,6 +78,8 @@ html, body {
 	height: 60%;
 	background-color: #BC987E;
 	text-align: center;
+	overflow-x: auto;
+	overflow-y: hidden;
 }
 
 #map {

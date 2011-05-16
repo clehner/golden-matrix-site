@@ -1,3 +1,8 @@
+Couch.urlPrefix =
+	(location.host == "localhost" || location.host == "cel.local") ?
+	"/couchdb/" : "";
+var db = Couch.db("goldenmatrix");
+
 var nodeContainer = $("map");
 
 var nodes = [];
@@ -38,6 +43,7 @@ function GMNode(doc) {
 	this.element = document.createElement("a");
 	this.element.className = "node";
 	this.element.href = "#{year}," + this.id;
+	this.element.title = this.name;
 	
 	var s = this.element.style;
 	var pos = doc.position || 0;
@@ -94,7 +100,7 @@ GMNode.prototype = {
 	},
 	areaToRadius: function (area) {
 		return Math.sqrt(area) * this.baseSize
-			* nodeContainer.offsetWidth / 400 + "px";
+			* nodeContainer.offsetWidth / 685 + "px";
 	},
 	animateSizeToYear: function (year, force) {
 		if (this.currentYear == year && !force) return;
@@ -128,12 +134,12 @@ function updateNodeSizesWithYear(year) {
 	});
 }
 
-ajax('/couchdb/goldenmatrix/_design/goldenmatrix/_view/nodes_and_threads', function (text) {
-	var data = JSON.parse(text);
+//ajax('/couchdb/goldenmatrix/_design/goldenmatrix/_view/nodes_and_threads',
+db.view('goldenmatrix/nodes_and_threads', {success: function (data) {
 	buildNodes(data.rows);
 	slider.update();
 	readHash();
-});
+}});
 
 function buildNodes(rows) {
 	rows.forEach(function (row) {
@@ -267,3 +273,17 @@ function onResize(e) {
 	hideMap();
 	setTimeout(showMap, 0);
 }
+
+
+// utility
+/*
+nodes.map(function (node) { return node.id; }).forEach(function (nodeId) {
+	db.openDoc(nodeId, {success: function (doc) {
+		doc.position = [
+			(doc.position[0] * 741 - 56) / 685,
+			(doc.position[1] * 425 - 95) / 330
+			];
+		db.saveDoc(doc);
+	}});
+});
+*/

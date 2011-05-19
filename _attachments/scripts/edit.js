@@ -108,9 +108,16 @@ GMNode.prototype = {
 					});
 				}
 			);
-			close();
-			alert(JSON.stringify(this.doc.timeline));
+			db.saveDoc(this.doc, {
+				success: close,
+				error: function (status, err, reason) {
+					addText(editorForm, reason);
+				}.bind(this)
+			});
 		}.bind(this), false);
+	},
+	closeEditor: function () {
+		this.el.removeChild(this.editorEl);
 	}
 };
 
@@ -166,9 +173,9 @@ GMThread.prototype = {
 		addText(this.editorEl, "...");
 		db.saveDoc(this.doc, {
 			success: this.closeEditor.bind(this),
-			error: function (e) {
-				addText(this.editorTextarea, e);
-			}
+			error: function (status, err, reason) {
+				addText(this.editorEl, reason);
+			}.bind(this)
 		});
 	}
 };

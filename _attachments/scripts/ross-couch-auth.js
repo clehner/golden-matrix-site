@@ -7,6 +7,8 @@ function proxyLogin(proxyAddr, username, password, callback) {
 	form.action = proxyAddr;
 	form.method = "post";
 	form.target = "ross-couch-auth-hidden-iframe";
+	form.style.display = "none";
+	document.body.appendChild(form);
 	
 	var passInput = document.createElement("input");
 	passInput.type = "hidden";
@@ -27,6 +29,7 @@ function proxyLogin(proxyAddr, username, password, callback) {
 	iframe.onload = function () {
 		iframe.onload = null;
 		document.body.removeChild(iframe);
+		document.body.removeChild(form);
 		callback();
 	};
 	

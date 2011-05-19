@@ -47,14 +47,15 @@ function (doc, oldDoc, userCtx) {
 		throw {unauthorized: "You don't have permission to do that."};
 	}
 	
+	if (doc._deleted) {
+		if (!isAdmin) {
+			throw {unauthorized: "Only admin can delete docs."};
+		}
+		return;
+	}
+	
 	if (type == "node") {
-		/*if (doc._deleted) {
-			validate([
-				isAdmin, "Only admin can delete stuff."
-			]);
-			return;
-		}*/
-		if (doc.name.toLowerCase() != doc._id)) {
+		if (doc.name.toLowerCase() != doc._id) {
 			throw {forbidden: "Node id should be lowercase of its name."};
 		}
 		if (!isArray(doc.timeline)) {

@@ -1,3 +1,12 @@
+body {
+	margin: 8px;
+}
+
+h1 {
+	margin-bottom: 1ex;
+	font-size: 1.5em;
+}
+
 #nodes li:not(:hover) a {
 	display: none;
 }
@@ -6,4 +15,12 @@
 	display: block;
 	width: 30em;
 	height: 6em;
+}
+
+.timeline-editor-input {
+	width: 30em;
+}
+
+#login, #login-status {
+	display: none;
 }

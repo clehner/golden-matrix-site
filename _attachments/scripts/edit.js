@@ -1,7 +1,9 @@
-Couch.urlPrefix = "/couchdb/";
+if (location.host == "localhost" || location.host == "cel.local") {
+	Couch.urlPrefix = "/couchdb";
+}
 var db = Couch.db("goldenmatrix");
 
-var nodesList = $("nodes");
+var nodesList;
 
 function addText(element, text) {
 	element.appendChild(document.createTextNode(text || " "));
@@ -19,19 +21,22 @@ function GMNode(id) {
 	nodes[id] = this;
 	
 	this.el = document.createElement("li");
-	this.el.appendChild(document.createTextNode(id));
+	var h = document.createElement("strong");
+	h.appendChild(document.createTextNode(id));
+	this.el.appendChild(h);
+	//this.el.appendChild(document.createTextNode(id));
 	
 	addText(this.el);
 	this.editLink = document.createElement("a");
 	this.editLink.href = "";
-	this.editLink.onclick = bindClick(this.openForEditing);
+	this.editLink.onclick = bindClick(this.openForEditing, this);
 	this.editLink.appendChild(document.createTextNode("edit"));
 	this.el.appendChild(this.editLink);
 	
 	addText(this.el);
 	this.addLink = document.createElement("a");
 	this.addLink.href = "";
-	this.addLink.onclick = bindClick(this.addNewThread);
+	this.addLink.onclick = bindClick(this.addNewThread, this);
 	this.addLink.appendChild(document.createTextNode("add node"));
 	this.el.appendChild(this.addLink);
 	
@@ -45,9 +50,6 @@ GMNode.prototype = {
 	addThread: function (thread) {
 		this.threadsEl.appendChild(thread.el);
 	},
-	openForEditing: function () {
-		
-	},
 	addNewThread: function () {
 		var name = prompt("Enter a name for the node, capitalized.", "");
 		if (!name) return;
@@ -60,6 +62,55 @@ GMNode.prototype = {
 		};
 		this.addThread(new GMThread(doc._id, doc));
 		db.saveDoc(doc);
+	},
+	openForEditing: function () {
+		db.openDoc(this.id, {success: function (doc) {
+			this.doc = doc;
+			this.addEditor();
+		}.bind(this)});
+	},
+	addEditor: function () {
+		// timeline editor
+		var editorForm = document.createElement("form");
+		var timeline = [];//this.doc.timeline.slice(0);
+		var timelineInput = document.createElement("input");
+		timelineInput.className = "timeline-editor-input";
+		// allow editing the timeline in a simple text format
+		timelineInput.value = this.doc.timeline.map(function (point) {
+			return point.join(":");
+		}).join(", ");
+		this.el.insertBefore(editorForm, this.threadsEl);
+		editorForm.appendChild(document.createTextNode("timeline: "));
+		editorForm.appendChild(timelineInput);
+		
+		var saveBtn = document.createElement("input");
+		saveBtn.type = "submit";
+		saveBtn.value = "Save";
+		editorForm.appendChild(saveBtn);
+		
+		var cancelBtn = document.createElement("input");
+		cancelBtn.type = "reset";
+		cancelBtn.value = "Cancel";
+		editorForm.appendChild(cancelBtn);
+		
+		var el = this.el;
+		function close() {
+			el.removeChild(editorForm);
+		}
+		
+		editorForm.addEventListener("reset", close, false);
+		editorForm.addEventListener("submit", function (e) {
+			e.preventDefault();
+			this.doc.timeline = timelineInput.value.split(/, */).map(
+				function (pointStr) {
+					return pointStr.split(/: */).map(function (n) {
+						return +n || 0;
+					});
+				}
+			);
+			close();
+			alert(JSON.stringify(this.doc.timeline));
+		}.bind(this), false);
 	}
 };
 
@@ -97,10 +148,15 @@ GMThread.prototype = {
 		this.editorTextarea.value = this.doc.content;
 		this.editorEl.appendChild(this.editorTextarea);
 		
-		var saveBtn = document.createElement("button");
-		addText(saveBtn, "Save");
+		var saveBtn = document.createElement("input");
+		saveBtn.value = "Save";
 		saveBtn.type = "submit";
 		this.editorEl.appendChild(saveBtn);
+		
+		var cancelBtn = document.createElement("input");
+		cancelBtn.value = "Cancel";
+		cancelBtn.type = "reset";
+		this.editorEl.appendChild(cancelBtn);
 	},
 	closeEditor: function () {
 		this.el.removeChild(this.editorEl);
@@ -117,16 +173,85 @@ GMThread.prototype = {
 	}
 };
 
-db.view('goldenmatrix/node_and_thread_names', {
-	group: true,
-	success: function (data) {
-		data.rows.forEach(function (row) {
-			var nodeName = row.key;
-			var threadNames = row.value;
-			var node = new GMNode(nodeName);
-			threadNames.forEach(function (threadName) {
-				node.addThread(new GMThread(threadName));
+function showList() {
+	db.view('goldenmatrix/node_and_thread_names', {
+		group: true,
+		success: function (data) {
+			data.rows.forEach(function (row) {
+				var nodeName = row.key;
+				var threadNames = row.value;
+				var node = new GMNode(nodeName);
+				threadNames.forEach(function (threadName) {
+					node.addThread(new GMThread(threadName));
+				});
 			});
+		}
+	});
+}
+
+function hideList() {
+	nodesList.innerHTML = "";
+	nodes = {};
+	nodeThreads = {};
+}
+
+function showLoggedinUser(username) {
+	$("login-status").style.display = username ? "block" : "none";
+	$("loggedin-user").innerHTML = username;
+}
+
+function init() {
+	nodesList = $("nodes");
+	setupLogin();
+	Couch.session({success: function (session) {
+		var username = session.userCtx.name;
+		if (username) {
+			showList();
+			showLoggedinUser(username);
+		} else {
+			showLogin();
+		}
+	}, error: function (reason) {
+		showLogin();
+	}});
+}
+
+function showLogin() {
+	$("login").style.display = "block";
+	showLoggedinUser("");
+}
+
+function hideLogin() {
+	$("login").style.display = "none";
+}
+
+function setLoginMsg(msg) {
+	$("login-msg").textContent = msg;
+}
+
+var authTarget = "http://home.lehnerstudios.com:8124/login";
+function setupLogin() {
+	$("logout-link").onclick = function (e) {
+		e.preventDefault();
+		Couch.logout({success: function () {
+			showLogin();
+			hideList();
+		}});
+	};
+	$("login").onsubmit = function (e) {
+		e.preventDefault();
+		var user = $("username").value;
+		var pass = $("password").value;
+		setLoginMsg("...");
+		RossCouchAuth.login(authTarget, user, pass, function (ok) {
+			if (ok) {
+				setLoginMsg("");
+				hideLogin();
+				showList();
+				showLoggedinUser(user);
+			} else {
+				setLoginMsg("Unable to log in.");
+			}
 		});
-	}
-});
+	};
+}

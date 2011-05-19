@@ -7,11 +7,28 @@
 <link rel="stylesheet" type="text/css" href="styles/edit.css">
 <script src="scripts/util.js"></script>
 <script src="scripts/couchdb.js"></script>
+<script src="scripts/edit.js"></script>
+<script src="scripts/ross-couch-auth.js"></script>
+</body>
 </head>
 <body>
+<h1>Golden Matrix</h1>
+<a href=".">Back</a>
+<form id="login" action="">
+	<p>Login in using your Ross gmail account:</p>
+	<p>Username: <input id="username" name="username"><br>
+	Password: <input id="password" name="password" type="password"></p>
+	<p><button type="submit">Log in</button></p>
+	<p id="login-msg"></p>
+</form>
+<p id="login-status">
+You are logged in as <strong id="loggedin-user"></strong>.
+<a href="" id="logout-link">Log out</a>
+</p>
 <div id="node-thread-editor">
-<ul id="nodes"></ul>
+	<ul id="nodes"></ul>
 </div>
-<script src="scripts/edit.js"></script>
-</body>
+<script>
+init()
+</script>
 </html>

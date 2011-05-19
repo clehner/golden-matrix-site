@@ -90,6 +90,8 @@ var Couch = (function() {
       url += "?" + data;
     }
     
+    opt.beforeSend && opt.beforeSend();
+    
     if (opt.username) {
       xhr.open(type, url, opt.async, opt.username, opt.password);
     } else {
@@ -485,7 +487,7 @@ var Couch = (function() {
             ajaxOptions
           );
         },
-        saveDoc: function(doc, options) {
+        saveDoc: function(doc, options, ajaxOptions) {
           options = options || {};
           var db = this;
           var beforeSend = fullCommit(options);
@@ -530,7 +532,8 @@ var Couch = (function() {
               }
             }},
             options,
-            "The document could not be saved: "
+            "The document could not be saved: ",
+            ajaxOptions
           );
         },
         bulkSave: function(docs, options) {

@@ -17,11 +17,12 @@ html, body {
 	height: 40px;
 	/*border: 1px solid #BC987E;*/
 	position: relative;
+	background-color: #edc;
 }
 #timeline-track {
 	position: absolute;
 	/*border: 1px solid #483C32;*/
-	background-color: #edc;
+	background-color: #BC987E;
 	top: 50%;
 	left: .5em;
 	right: .5em;
@@ -41,7 +42,8 @@ html, body {
 #timeline .date {
 	padding: 0 .5em;
 	/*color: #8B8589;*/
-	color: #876;
+	/*color: #876;*/
+	color: #483C32;
 	position: absolute;
 	white-space: nowrap;
 	cursor: move;
@@ -76,7 +78,7 @@ html, body {
 
 #map-container {
 	height: 60%;
-	background-color: #BC987E;
+	background-color: #483C32;
 	text-align: center;
 	overflow-x: auto;
 	overflow-y: hidden;
@@ -115,6 +117,7 @@ html, body {
 
 #info {
 	height: 40%;
+	background-color: #edc;
 	/*border: 1px solid #8B8589;*/
 }
 
@@ -147,7 +150,7 @@ html, body {
 	color: inherit;
 }
 #node-thread-content-outer h4 {
-	color: #655;
+	color: #483C32;
 }
 
 #edit-link {

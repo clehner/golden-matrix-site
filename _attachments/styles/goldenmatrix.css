@@ -130,16 +130,14 @@ html, body {
 	margin: 0 1em;
 	min-width: 6em;
 }
-#node-thread-content {
+#node-thread-content, #node-thread-heading {
 	margin: 1em;
 	line-height: 1.6em;
-}
-.node-thread {
 }
 
 #node-headings h2 {
 	font-size: 1em;
-	color: #544;
+	color: #433;
 }
 #node-headings h3 {
 	font-size: 1em;
@@ -147,4 +145,13 @@ html, body {
 }
 #node-headings h3 a {
 	color: inherit;
+}
+#node-thread-content-outer h4 {
+	color: #655;
+}
+
+#edit-link {
+	font-size: .75em;
+	float: right;
+	margin: 1em;
 }

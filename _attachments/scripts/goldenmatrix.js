@@ -186,12 +186,14 @@ function gotoYear(year) {
 
 var headingsElement = $("node-headings");
 var contentElement = $("node-thread-content");
+var contentHeadingText = $("node-thread-heading").firstChild;
 function gotoNodeThread(node, thread) {
 	if (currentNodeThread != thread) {
 		currentNodeThread = thread;
 		var old = contentElement.firstChild;
 		if (old) contentElement.removeChild(old);
 		if (thread) contentElement.appendChild(thread.element);
+		contentHeadingText.nodeValue = thread ? thread.name : "";
 	}
 	if (currentNode != node) {
 		currentNode = node;

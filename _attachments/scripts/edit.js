@@ -2,7 +2,11 @@ if (location.host == "localhost" || location.host == "cel.local") {
 	Couch.urlPrefix = "/couchdb";
 }
 var db = Couch.db("goldenmatrix");
-
+var userCtx;
+var username;
+function isAdmin() {
+	return userCtx && userCtx.roles.indexOf("_admin") != -1;
+}
 var nodesList;
 
 function addText(element, text) {
@@ -51,14 +55,15 @@ GMNode.prototype = {
 		this.threadsEl.appendChild(thread.el);
 	},
 	addNewThread: function () {
-		var name = prompt("Enter a name for the node, capitalized.", "");
+		var name = prompt("Enter a name for the node, capitalized.", "").trim();
 		if (!name) return;
 		var doc = {
 			_id: this.id + "-" + name.toLowerCase(),
 			name: name,
 			type: "node-thread",
 			node: this.id,
-			content: ""
+			content: "",
+			author: username
 		};
 		this.addThread(new GMThread(doc._id, doc));
 		db.saveDoc(doc);
@@ -164,6 +169,26 @@ GMThread.prototype = {
 		cancelBtn.value = "Cancel";
 		cancelBtn.type = "reset";
 		this.editorEl.appendChild(cancelBtn);
+		
+		if (isAdmin()) {
+			var deleteBtn = document.createElement("input");
+			deleteBtn.value = "Delete";
+			deleteBtn.type = "button";
+			deleteBtn.onclick = this.deleteDoc.bind(this);
+			this.editorEl.appendChild(deleteBtn);
+		}
+	},
+	deleteDoc: function () {
+		addText(this.editorEl, "...");
+		db.removeDoc(this.doc, {
+			success: function () {
+				this.el.parentNode.removeChild(this.el);
+				this.closeEditor();
+			}.bind(this),
+			error: function (status, err, reason) {
+				addText(this.editorEl, reason);
+			}.bind(this)
+		});
 	},
 	closeEditor: function () {
 		this.el.removeChild(this.editorEl);
@@ -211,7 +236,8 @@ function init() {
 	nodesList = $("nodes");
 	setupLogin();
 	Couch.session({success: function (session) {
-		var username = session.userCtx.name;
+		userCtx = session.userCtx;
+		username = userCtx.name;
 		if (username) {
 			showList();
 			showLoggedinUser(username);
@@ -219,6 +245,8 @@ function init() {
 			showLogin();
 		}
 	}, error: function (reason) {
+		username = null;
+		userCtx = null;
 		showLogin();
 	}});
 }

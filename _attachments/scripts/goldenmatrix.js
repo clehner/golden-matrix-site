@@ -45,6 +45,11 @@ function GMNode(doc) {
 	this.element.href = "#{year}," + this.id;
 	this.element.title = this.name;
 	
+	var nameEl = document.createElement("span");
+	nameEl.className = "name";
+	nameEl.appendChild(document.createTextNode(this.name));
+	this.element.appendChild(nameEl);
+	
 	var s = this.element.style;
 	var pos = doc.position || 0;
 	s.left = pos[0] * 100 + "%";
@@ -105,7 +110,7 @@ GMNode.prototype = {
 	animateSizeToYear: function (year, force) {
 		if (this.currentYear == year && !force) return;
 		this.currentYear = year;
-		var size = this.getSizeAtYear(year).toFixed(0)
+		var size = this.getSizeAtYear(year).toFixed(0);
 		if (this.currentSize == size && !force) return;
 		var style = this.element.style;
 		if (size == 0) {
@@ -240,7 +245,13 @@ window.addEventListener("hashchange", readHash, false);
 
 // rewrite links with hashes. i bet some framework does this kind of thing.
 function rewriteHref(e) {
-	if (e.target.nodeName != "A") return;
+	var el = e.target;
+	if (el.nodeName != "A") {
+		el = el.parentNode;
+	}
+	if (el.nodeName != "A") {
+		return;
+	}
 	var href = e.target.getAttribute("href");
 	if (!href) return;
 	var href2 = e.target.getAttribute("data-href");

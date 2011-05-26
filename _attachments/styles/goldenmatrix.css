@@ -115,6 +115,23 @@ html, body {
 	background-color: #C25D1E;
 }
 
+#map a {
+	color: inherit;
+	text-decoration: inherit;
+}
+
+#map .node .name {
+	font-size: .5em;
+	color: inherit;
+	position: absolute;
+	left: 2.4em;
+	text-align: left;
+	bottom: 0;
+	background-color: rgba(228, 197, 155, .8);
+	border-radius: 1ex;
+	padding: 1px .4em;
+}
+
 #info {
 	height: 40%;
 	background-color: #edc;

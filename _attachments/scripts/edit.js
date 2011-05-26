@@ -55,7 +55,7 @@ GMNode.prototype = {
 		this.threadsEl.appendChild(thread.el);
 	},
 	addNewThread: function () {
-		var name = prompt("Enter a name for the node, capitalized.", "").trim();
+		var name = prompt("Enter a name for the node.", "").trim();
 		if (!name) return;
 		var doc = {
 			_id: this.id + "-" + name.toLowerCase(),
@@ -207,7 +207,7 @@ GMThread.prototype = {
 
 function showList() {
 	db.view('goldenmatrix/node_and_thread_names', {
-		group: true,
+		group_level: 1,
 		success: function (data) {
 			data.rows.forEach(function (row) {
 				var nodeName = row.key;

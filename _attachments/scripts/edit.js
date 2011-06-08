@@ -55,8 +55,9 @@ GMNode.prototype = {
 		this.threadsEl.appendChild(thread.el);
 	},
 	addNewThread: function () {
-		var name = prompt("Enter a name for the node.", "").trim();
+		var name = prompt("Enter a name for the node.", "");
 		if (!name) return;
+		name = name.trim();
 		var doc = {
 			_id: this.id + "-" + name.toLowerCase(),
 			name: name,
@@ -206,17 +207,22 @@ GMThread.prototype = {
 };
 
 function showList() {
-	db.view('goldenmatrix/node_and_thread_names', {
-		group_level: 1,
+	db.view('goldenmatrix/nodes_and_threads', {
 		success: function (data) {
+			var threadsByNode = {};
 			data.rows.forEach(function (row) {
-				var nodeName = row.key;
-				var threadNames = row.value;
+				var node = row.key[0];
+				var thread = row.value;
+				var threads = threadsByNode[node] || (threadsByNode[node] = []);
+				if (thread) threads.push(thread);
+			});
+			for (var nodeName in threadsByNode) {
+				var threadNames = threadsByNode[nodeName];
 				var node = new GMNode(nodeName);
 				threadNames.forEach(function (threadName) {
 					node.addThread(new GMThread(threadName));
 				});
-			});
+			}
 		}
 	});
 }
@@ -276,6 +282,7 @@ function setupLogin() {
 	$("login").onsubmit = function (e) {
 		e.preventDefault();
 		var user = $("username").value;
+		user = $("username").value = user.replace("@ross.org", "");
 		var pass = $("password").value;
 		setLoginMsg("...");
 		RossCouchAuth.login(authTarget, user, pass, function (ok) {

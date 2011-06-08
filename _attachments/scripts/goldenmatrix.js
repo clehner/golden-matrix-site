@@ -139,22 +139,23 @@ function updateNodeSizesWithYear(year) {
 	});
 }
 
-//ajax('/couchdb/goldenmatrix/_design/goldenmatrix/_view/nodes_and_threads',
-db.view('goldenmatrix/nodes_and_threads', {success: function (data) {
-	buildNodes(data.rows);
-	slider.update();
-	readHash();
-}});
+db.view('goldenmatrix/nodes_and_threads', {
+	include_docs: true,
+	success: function (data) {
+		data.rows.forEach(function (row) {
+			addDoc(row.doc);
+		});
+		slider.update();
+		readHash();
+	}
+});
 
-function buildNodes(rows) {
-	rows.forEach(function (row) {
-		var value = row.value;
-		if (value.type == "node") {
-			addNode(new GMNode(value));
-		} else if (value.type == "node-thread") {
-			getNodeById(value.node).setThread(new GMThread(value));
-		}
-	});
+function addDoc(doc) {
+	if (doc.type == "node") {
+		addNode(new GMNode(doc));
+	} else if (doc.type == "node-thread") {
+		getNodeById(doc.node).setThread(new GMThread(doc));
+	}
 }
 
 var dateEl = $("current-date");

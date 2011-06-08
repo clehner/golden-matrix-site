@@ -55,6 +55,7 @@ function (doc, oldDoc, userCtx) {
 	}
 	
 	if (type == "node") {
+	
 		if (doc.name.toLowerCase() != doc._id) {
 			throw {forbidden: "Node id should be lowercase of its name."};
 		}
@@ -65,11 +66,15 @@ function (doc, oldDoc, userCtx) {
 			throw {forbidden: "Node must have a position point."};
 		}
 	} else if (type == "node-thread") {
+	
 		if (doc._id != (doc.node + "-" + doc.name.toLowerCase())) {
 			throw {forbidden: "Node-thread id must be node-{name} where {name} is the lowercase of its thread name."};
 		}
 		if (typeof doc.content != "string") {
 			throw {forbidden: "Node-thread should have some content."};
+		}
+		if (doc.position && typeof doc.position != "number") {
+			throw {forbidden: "Node-thread position should be a number."};
 		}
 	
 	} else {

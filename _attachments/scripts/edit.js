@@ -23,6 +23,7 @@ var nodes = {};
 function GMNode(id) {
 	this.id = id;
 	nodes[id] = this;
+	this.threads = [];
 	
 	this.el = document.createElement("li");
 	var h = document.createElement("strong");
@@ -53,6 +54,8 @@ function GMNode(id) {
 GMNode.prototype = {
 	addThread: function (thread) {
 		this.threadsEl.appendChild(thread.el);
+		this.threads.push(thread);
+		thread.node = this;
 	},
 	addNewThread: function () {
 		var name = prompt("Enter a name for the node.", "");
@@ -124,15 +127,23 @@ GMNode.prototype = {
 	},
 	closeEditor: function () {
 		this.el.removeChild(this.editorEl);
-	}
+	},
+	reorderThreads: function () {
+		var threadsEl = this.threadsEl;
+		this.threads.sort(function (a, b) {
+			return a.doc.position - b.doc.position;
+		}).forEach(function (thread) {
+			threadsEl.appendChild(thread.el);
+		});
+	},
 };
 
 var nodeThreads = {};
-function GMThread(id, doc) {
+function GMThread(id, doc, position) {
 	nodeThreads[id] = this;
 	this.id = id;
 	this.name = id.split("-")[1];
-	this.doc = doc;
+	this.doc = doc || {position: position};
 	
 	this.el = document.createElement("li");
 	this.el.appendChild(document.createTextNode(this.name));
@@ -178,6 +189,12 @@ GMThread.prototype = {
 			deleteBtn.onclick = this.deleteDoc.bind(this);
 			this.editorEl.appendChild(deleteBtn);
 		}
+		
+		addText(this.editorEl, " position: ");
+		this.positionInput = document.createElement("input");
+		this.positionInput.size = 1;
+		this.positionInput.value = this.doc.position || 0;
+		this.editorEl.appendChild(this.positionInput);
 	},
 	deleteDoc: function () {
 		addText(this.editorEl, "...");
@@ -196,9 +213,13 @@ GMThread.prototype = {
 	},
 	saveEdits: function () {
 		this.doc.content = this.editorTextarea.value;
+		this.doc.position = +this.positionInput.value || 0;
 		addText(this.editorEl, "...");
 		db.saveDoc(this.doc, {
-			success: this.closeEditor.bind(this),
+			success: function () {
+				this.closeEditor();
+				this.node.reorderThreads();
+			}.bind(this),
 			error: function (status, err, reason) {
 				addText(this.editorEl, reason);
 			}.bind(this)
@@ -219,8 +240,8 @@ function showList() {
 			for (var nodeName in threadsByNode) {
 				var threadNames = threadsByNode[nodeName];
 				var node = new GMNode(nodeName);
-				threadNames.forEach(function (threadName) {
-					node.addThread(new GMThread(threadName));
+				threadNames.forEach(function (threadName, i) {
+					node.addThread(new GMThread(threadName, null, i));
 				});
 			}
 		}

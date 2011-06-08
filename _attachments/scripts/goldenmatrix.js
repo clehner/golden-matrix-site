@@ -193,6 +193,11 @@ var headingsElement = $("node-headings");
 var contentElement = $("node-thread-content");
 var contentHeadingText = $("node-thread-heading").firstChild;
 function gotoNodeThread(node, thread) {
+	if (!thread) {
+		// use first thread if none is specified
+		thread = node.threads[0];
+		var redirecting = true;
+	}
 	if (currentNodeThread != thread) {
 		currentNodeThread = thread;
 		var old = contentElement.firstChild;
@@ -207,9 +212,13 @@ function gotoNodeThread(node, thread) {
 		headingsElement.appendChild(node.headingsElement);
 	}
 	currentId = thread ? thread.id : node ? node.id : '';
+	if (redirecting) {
+		// try not to break the back button when rewriting the hash
+		updateHash(true);
+	}
 }
 
-function updateHash() {
+function updateHash(replace) {
 	var hash = "";
 	if (currentYear != defaultYear ||
 		currentId != defaultId) {
@@ -218,7 +227,11 @@ function updateHash() {
 			hash += "," + currentId;
 		}
 	}
-	location.hash = hash;
+	if (replace) {
+		location.replace(hash);
+	} else {
+		location.hash = hash;
+	}
 }
 var updateHashSoon = updateHash.debounce(500);
 
@@ -245,26 +258,28 @@ window.addEventListener("hashchange", readHash, false);
 
 // rewrite links with hashes. i bet some framework does this kind of thing.
 function rewriteHref(e) {
-	var el = e.target;
-	if (el.nodeName != "A") {
-		el = el.parentNode;
+	var a = e.target;
+	if (a.nodeName != "A") {
+		a = a.parentNode;
 	}
-	if (el.nodeName != "A") {
+	if (a.nodeName != "A") {
 		return;
 	}
-	var href = e.target.getAttribute("href");
-	if (!href) return;
-	var href2 = e.target.getAttribute("data-href");
+	var href = a.getAttribute("href");
+	if (!href) {
+		return;
+	}
+	var href2 = a.getAttribute("data-href");
 	if (href2) {
 		href = href2;
 	} else {
-		e.target.setAttribute("data-href", href);
+		a.setAttribute("data-href", href);
 	}
-	e.target.setAttribute("href", href.replace("{year}", currentYear));
+	a.setAttribute("href", href.replace("{year}", currentYear));
 }
-window.addEventListener("click", rewriteHref, false);
-window.addEventListener("focus", rewriteHref, false);
-window.addEventListener("mouseover", rewriteHref, false);
+document.addEventListener("click", rewriteHref, false);
+document.addEventListener("focus", rewriteHref, false);
+document.addEventListener("mouseover", rewriteHref, false);
 
 // prevent dragging map image
 $("map-img").addEventListener("mousedown", function (e) {
